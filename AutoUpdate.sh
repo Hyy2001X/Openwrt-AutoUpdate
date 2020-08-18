@@ -6,7 +6,7 @@ Github_Release_URL=https://github.com/Hyy2001X/Openwrt-AutoUpdate/releases/tag/A
 Git_Download_URL=https://github.com/Hyy2001X/Openwrt-AutoUpdate/releases/download/AutoUpdate/
 CURRENT_VERSION=`cat /etc/openwrt_date`
 clear
-echo -e "Openwrt Auto-Update Script $Version by Hyy2001\n"
+echo -e "Auto-Update For Lede Script $Version by Hyy2001\n"
 if [ "$CURRENT_VERSION" == "" ]; then
 	echo "本地固件版本获取失败!"
 	exit
