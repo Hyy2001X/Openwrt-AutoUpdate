@@ -1,9 +1,9 @@
 #!/bin/bash
 # AutoBuild Script Module by Hyy2001
 
-Version=V1.0
-Github_Release_URL=https://github.com/Nxiz/AutoBuild/releases/tag/Auto-Update
-Git_Download_URL=https://github.com/Nxiz/AutoBuild/releases/download/Auto-Update
+Version=V1.1
+Github_Release_URL=https://github.com/Hyy2001X/Openwrt-AutoUpdate/releases/tag/AutoUpdate
+Git_Download_URL=https://github.com/Hyy2001X/Openwrt-AutoUpdate/releases/download/AutoUpdate/
 CURRENT_VERSION=`cat /etc/openwrt_date`
 clear
 echo -e "Openwrt Auto-Update Script $Version by Hyy2001\n"
