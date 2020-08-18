@@ -1,7 +1,7 @@
 #!/bin/bash
 # AutoBuild Script Module by Hyy2001
 
-Version=V1.1
+Version=V1.2
 Github_Release_URL=https://github.com/Hyy2001X/Openwrt-AutoUpdate/releases/tag/AutoUpdate
 Git_Download_URL=https://github.com/Hyy2001X/Openwrt-AutoUpdate/releases/download/AutoUpdate/
 CURRENT_VERSION=`cat /etc/openwrt_date`
@@ -21,7 +21,7 @@ fi
 echo -e "\n当前版本: $CURRENT_VERSION"
 echo "云端版本: $GET_Version"
 if [ $CURRENT_VERSION == $GET_Version ];then
-	echo "System up-to-date"
+	echo -e "\n当前已是最新版系统,无需更新!"
 	exit
 fi
 Firmware=AutoBuild-d-team_newifi-d2-Lede-$GET_Version.bin
