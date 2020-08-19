@@ -1,10 +1,10 @@
 #!/bin/bash
 # AutoBuild Script Module by Hyy2001
 
-Version=V1.3
+Version=V1.4
 Github_Host_URL=https://github.com/Hyy2001X/Openwrt-AutoUpdate
 Github_Release_URL=$Github_Host_URL/releases/tag/AutoUpdate
-Github_Download_URL=$Github_Host_URL/releases/download/AutoUpdate/
+Github_Download_URL=$Github_Host_URL/releases/download/AutoUpdate
 if [ ! -f /etc/openwrt_date ];then
 	echo "本地固件版本信息获取失败!"
 	exit
@@ -50,12 +50,12 @@ echo "...下载成功!"
 GET_SHA=`awk -F'[ :]' '/SHA256/ {print $2;exit}' $Firmware_Detail`
 CURRENT_SHA=`sha256sum $Firmware | cut -d ' ' -f1`
 echo -e "\n云端SHA256:$GET_SHA"
-echo "当前SHA256:$CURRENT_SHA"
+echo -e "当前SHA256:$CURRENT_SHA\n"
 if [ $GET_SHA == "" ] || [ $CURRENT_SHA == "" ];then
-	echo "SHA256对比失败!"
+	echo "SHA256对比失败,请重新下载更新!"
 	exit
 else
-	echo "...SHA256对比通过,准备升级固件..."
+	echo "SHA256对比通过,准备升级固件..."
 fi
 sleep 3
 echo -e "\n开始升级固件,请耐心等待..."
