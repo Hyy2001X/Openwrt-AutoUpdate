@@ -2,7 +2,7 @@
 # AutoBuild Script Module by Hyy2001
 # AutoUpdate
 
-Version=V1.7
+Version=V1.8
 Github=https://github.com/Hyy2001X/Openwrt-AutoUpdate
 Github_Release=$Github/releases/tag/AutoUpdate
 Github_Download=$Github/releases/download/AutoUpdate
@@ -19,7 +19,12 @@ if [ "$CURRENT_VERSION" == "" ]; then
 	exit
 fi
 cd /tmp
-echo "开始获取云端版本信息..."
+echo "正在获取云端固件详细信息..."
+Check_Version=`wget --no-check-certificate -q $Github_Release -O - | egrep -o 'R[0-9]+.[0-9]+.[0-9]+.[0-9]+.bin' | awk 'NR==1'`
+if [ "$Check_Version" == "" ]; then
+	echo -e "\n...未获取到云端固件信息!"
+	exit
+fi
 GET_Version=`wget --no-check-certificate -q $Github_Release -O - | egrep -o 'R[0-9]+.[0-9]+.[0-9]+.[0-9]+' | awk 'NR==1'`
 if [ "$GET_Version" == "" ]; then
 	echo -e "\n...获取失败!"
@@ -37,7 +42,7 @@ echo "云端固件名称:$Firmware"
 echo -e "\n正在下载云端固件..."
 wget --no-check-certificate -q $Github_Download/$Firmware -O $Firmware
 if [ ! "$?" == 0 ]; then
-	echo "[$Firmware]下载失败!"
+	echo "...下载失败,请重试!"
 	exit
 fi
 echo "...下载成功!"
