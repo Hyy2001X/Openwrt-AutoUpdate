@@ -15,19 +15,19 @@ fi
 echo -e "Auto-Update Script $Version by Hyy2001\n"
 CURRENT_VERSION=`cat /etc/openwrt_date`
 if [ "$CURRENT_VERSION" == "" ]; then
-	echo "固件信息获取失败!"
-	exit
+	echo -e "警告:当前固件信息获取失败!\n"
+	CURRENT_VERSION=未知
 fi
 cd /tmp
-echo "正在获取云端固件详细信息..."
+echo "正在获取云端固件信息..."
 Check_Version=`wget --no-check-certificate -q $Github_Release -O - | egrep -o 'R[0-9]+.[0-9]+.[0-9]+.[0-9]+.bin' | awk 'NR==1'`
 if [ "$Check_Version" == "" ]; then
-	echo -e "\n...未获取到云端固件信息!"
+	echo -e "\n...未获取到任何信息,请稍后重试!"
 	exit
 fi
 GET_Version=`wget --no-check-certificate -q $Github_Release -O - | egrep -o 'R[0-9]+.[0-9]+.[0-9]+.[0-9]+' | awk 'NR==1'`
 if [ "$GET_Version" == "" ]; then
-	echo -e "\n...获取失败!"
+	echo -e "\n...云端固件版本信息获取失败!"
 	exit
 fi
 echo -e "\n当前版本:$CURRENT_VERSION"
@@ -47,7 +47,7 @@ if [ ! "$?" == 0 ]; then
 fi
 echo "...下载成功!"
 echo "固件大小:$(du -h $Firmware | awk '{print $1}')"
-echo -e "\n开始下载固件详细信息..."
+echo -e "\n正在下载固件详细信息..."
 wget --no-check-certificate -q $Github_Download/$Firmware_Detail -O $Firmware_Detail
 if [ ! "$?" == 0 ]; then
 	echo "[$Firmware_Detail]下载失败!"
