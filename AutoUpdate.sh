@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/ash
 # AutoBuild Script Module by Hyy2001
 # AutoUpdate
 
-Version=V1.9-b
+Version=V1.9
 Updated=2020.09.09
 
 Github=https://github.com/Hyy2001X/Openwrt-AutoUpdate
@@ -44,11 +44,10 @@ if [ "$CURRENT_VERSION" == "$GET_Version" ];then
 		exit
 	;;
 	*)
-		echo "输入错误!"
+		echo "选择错误,请重试!"
 		exit
 	;;
 	esac
-	exit
 fi
 Firmware_Info=AutoBuild-d-team_newifi-d2-Lede-$GET_Version
 Firmware=${Firmware_Info}.bin
