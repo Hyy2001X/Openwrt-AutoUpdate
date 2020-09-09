@@ -14,10 +14,10 @@ if [ ! -f /etc/openwrt_date ];then
 	echo "AutoUpdate 不兼容当前固件!"
 	exit
 fi
-echo -e "Auto-Update Script $Version by Hyy2001X\n"
+echo -e "Auto-Update Script $Version by Hyy2001\n"
 CURRENT_VERSION=`cat /etc/openwrt_date`
 if [ "$CURRENT_VERSION" == "" ]; then
-	echo -e "警告:当前固件版本获取失败!\n"
+	echo -e "警告:当前固件信息获取失败!\n"
 	CURRENT_VERSION=未知
 fi
 cd /tmp
@@ -33,22 +33,20 @@ if [ "$GET_Version" == "" ]; then
 	exit
 fi
 echo -e "\n当前固件版本:$CURRENT_VERSION"
-echo -e "云固件端版本:$GET_Version\n"
-if [ "$CURRENT_VERSION" == "$GET_Version" ];then
-	read -p '已是最新版本,是否强制更新?[Y/N]:?' Choose
+echo -e "云端固件版本:$GET_Version\n"
+if [ $CURRENT_VERSION == $GET_Version ];then
+	read -p "已是最新版本,是否强制更新固件?[Y/N]:" Choose
 	case $Choose in
 	Y)
-		echo "开始强制更新固件..."
+		echo -e "\n开始强制更新固件...\n"
 	;;
 	N)
 		exit
 	;;
 	*)
-		echo "选择错误,请重试!"
+		echo -e "\n选择错误,请重试!"
 		exit
-	;;
 	esac
-	exit
 fi
 Firmware_Info=AutoBuild-d-team_newifi-d2-Lede-$GET_Version
 Firmware=${Firmware_Info}.bin
@@ -83,5 +81,5 @@ if [ ! "$GET_MD5" == "$CURRENT_MD5" ];then
 fi
 echo "MD5对比通过,准备升级固件..."
 sleep 3
-echo -e "\n开始升级固件,请耐心等待..."
+echo -e "\n开始升级固件,请耐心等待...\n"
 sysupgrade $Firmware
