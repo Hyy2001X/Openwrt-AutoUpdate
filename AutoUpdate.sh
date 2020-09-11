@@ -44,7 +44,8 @@ if [ $CURRENT_VERSION == $GET_Version ];then
 		echo -e "\n开始强制更新固件...\n"
 	;;
 	*)
-		echo -e "\n已取消强制更新!"
+		echo -e "\n已取消强制更新,即将退出更新程序..."
+		sleep 2
 		exit
 	esac
 fi
