@@ -2,8 +2,8 @@
 # AutoBuild Script Module by Hyy2001
 # AutoUpdate
 
-Version=V2.0
-Updated=2020.09.09
+Version=V2.1
+Updated=2020.09.11
 
 Github=https://github.com/Hyy2001X/Openwrt-AutoUpdate
 Github_Release=$Github/releases/tag/AutoUpdate
@@ -40,11 +40,11 @@ if [ $CURRENT_VERSION == $GET_Version ];then
 	Y)
 		echo -e "\n开始强制更新固件...\n"
 	;;
-	N)
-		exit
+	y)
+		echo -e "\n开始强制更新固件...\n"
 	;;
 	*)
-		echo -e "\n选择错误,请重试!"
+		echo -e "\n已取消强制更新!"
 		exit
 	esac
 fi
