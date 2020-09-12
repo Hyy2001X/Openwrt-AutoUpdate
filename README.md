@@ -8,8 +8,8 @@
 
 3.在命令行输入
 
-`curl -s https://raw.githubusercontent.com/Hyy2001X/Openwrt-AutoUpdate/master/AutoUpdate.sh | sh -s`
+`curl -s https://raw.githubusercontent.com/Hyy2001X/Openwrt-AutoUpdate/master/AutoUpdate.sh | sh`
 
-注:仅限 Actions-OpenWrt 编译的固件可使用此脚本
+注:仅限使用 AutoBuild-Actions 编译的固件可使用此脚本
 
-仓库地址:`https://github.com/Hyy2001X/Actions-OpenWrt`
+仓库地址:`https://github.com/Hyy2001X/AutoBuild-Actions`
