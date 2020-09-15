@@ -2,6 +2,7 @@
 # AutoBuild Script Module by Hyy2001
 # AutoUpdate
 
+Author=Hyy2001
 Version=V2.2
 Updated=2020.09.13
 
@@ -14,7 +15,7 @@ if [ ! -f /etc/openwrt_date ];then
 	echo "AutoUpdate 不兼容当前固件!"
 	exit
 fi
-echo -e "Auto-Update Script $Version by Hyy2001\n"
+echo -e "Auto-Update Script $Version by $Author\n"
 CURRENT_VERSION=`cat /etc/openwrt_date`
 if [ "$CURRENT_VERSION" == "" ]; then
 	echo -e "警告:当前固件版本获取失败!\n"
