@@ -3,12 +3,13 @@
 # AutoUpdate
 
 Author=Hyy2001
-Version=V2.2
-Updated=2020.09.13
+Version=V2.3
+Updated=2020.09.16
 
 Github=https://github.com/Hyy2001X/Openwrt-AutoUpdate
 Github_Release=$Github/releases/tag/AutoUpdate
 Github_Download=$Github/releases/download/AutoUpdate
+TARGET_PROFILE=d-team_newifi-d2
 
 clear
 if [ ! -f /etc/openwrt_date ];then
@@ -50,7 +51,7 @@ if [ $CURRENT_VERSION == $GET_Version ];then
 		exit
 	esac
 fi
-Firmware_Info=AutoBuild-d-team_newifi-d2-Lede-$GET_Version
+Firmware_Info=AutoBuild-$TARGET_PROFILE-Lede-$GET_Version
 Firmware=${Firmware_Info}.bin
 Firmware_Detail=${Firmware_Info}.detail
 echo "云端固件名称:$Firmware"
