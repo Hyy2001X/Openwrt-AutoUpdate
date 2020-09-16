@@ -2,11 +2,11 @@
 # AutoBuild Script Module by Hyy2001
 # AutoUpdate
 
-Author=Hyy2001
+Author=cdzyp520
 Version=V2.3
 Updated=2020.09.16
 
-Github=https://github.com/Hyy2001X/Openwrt-AutoUpdate
+Github=https://github.com/cdzyp520/Openwrt-AutoUpdate
 Github_Release=$Github/releases/tag/AutoUpdate
 Github_Download=$Github/releases/download/AutoUpdate
 TARGET_PROFILE=d-team_newifi-d2
