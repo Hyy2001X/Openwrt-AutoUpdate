@@ -2,22 +2,24 @@
 使用方法/Usage: 
 -
 
-1.打开路由器后管理界面
+1. 打开路由器后管理界面
 
-2.打开`系统`-`TTYD终端`
+2. 打开`系统`-`TTYD终端`
 
-3.在命令行输入
+3. 检查更新,在命令行输入
 
 `curl -s https://raw.githubusercontent.com/Hyy2001X/Openwrt-AutoUpdate/master/AutoUpdate.sh | sh`
 
-注:仅限使用 AutoBuild-Actions 编译的固件可使用此脚本
+4. 耐心等待路由器重启
+
+注:仅限使用 `AutoBuild-Actions` 编译的固件可使用此脚本
 
 如何搭建属于自己的自动更新通道(Github Release)
 -
 
 1. `Fork` Openwrt-AutoUpdate 仓库 `https://github.com/Hyy2001X/Openwrt-AutoUpdate`
 
-2. 进入你的 `Openwrt-AutoUpdate` 仓库
+2. 进入你的`Openwrt-AutoUpdate`仓库
 
 3. 编辑 `AutoUpdate.sh` 文件,修改第 5-12 行为自己的信息
 
@@ -34,15 +36,9 @@
 
 1. `Fork` AutoBuild-Actions 仓库 `https://github.com/Hyy2001X/AutoBuild-Actions`
 
-2. 进入你的 `AutoBuild-Actions` 仓库,上传你在本地生成的`.config`文件
+2. 进入你的 `AutoBuild-Actions` 仓库,上传在本地生成的`.config`文件
 
-3. 编辑 `Scripts/diy-part1.sh`文件,修改第 3-4 行地址为你的地址
-
-4. 编辑 `Scripts/diy-part2.sh`文件,修改第 3 行名称为你想要的作者名称(将显示于Openwrt主界面)
-
-5. 编辑 `Scripts/diy-part3.sh`文件,修改第 3-5 行内容为你的设备配置(参考`.config`文件)
-
-5. 注意:如果使用了其他格式如`ext4、img.gz`,请修改相关内容
+3. 编辑`Scripts/diy-script.sh`文件,自定义第 5 行`Diy_Core`下的内容
 
 6. 检查并保存,点击下方的`Commit changes`
 
@@ -55,7 +51,7 @@
 如何上传编译完成的固件至Github Release
 -
 
-1. 进入你的 `Openwrt-AutoUpdate` 仓库
+1. 进入你的`Openwrt-AutoUpdate`仓库
 
 2. 点击右边的`Release`
 
