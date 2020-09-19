@@ -1,18 +1,19 @@
 #!/bin/bash
-# AutoBuild Script Module by Hyy2001
+# https://github.com/Hyy2001X/AutoBuild-Actions
+# AutoBuild Module by Hyy2001
 # AutoUpdate
 
 Author=Hyy2001
-Version=V2.3
-Updated=2020.09.16
+Version=V2.5-BETA
+Updated=2020.09.19
 
-Github=https://github.com/Hyy2001X/Openwrt-AutoUpdate
-Github_Release=$Github/releases/tag/AutoUpdate
+Github=https://github.com/Hyy2001X/AutoBuild-Actions-BETA
+Github_Tags=$Github/releases/tag/AutoUpdate
 Github_Download=$Github/releases/download/AutoUpdate
 TARGET_PROFILE=d-team_newifi-d2
 
 clear
-if [ ! -f /etc/openwrt_date ];then
+if [ ! -f /etc/openwrt_date ] && [ ! -f /etc/openwrt_device ];then
 	echo "AutoUpdate 不兼容当前固件!"
 	exit
 fi
@@ -22,16 +23,21 @@ if [ "$CURRENT_VERSION" == "" ]; then
 	echo -e "警告:当前固件版本获取失败!\n"
 	CURRENT_VERSION=未知
 fi
+CURRENT_DEVICE=`cat /etc/openwrt_device`
+if [ "$CURRENT_DEVICE" == "" ]; then
+	echo -e "警告:当前设备名称获取失败,使用预设设备名称[$TARGET_PROFILE]!\n"
+	CURRENT_DEVICE=$TARGET_PROFILE
+fi
 cd /tmp
-echo "正在获取云端固件信息..."
-Check_Version=`wget --no-check-certificate -q $Github_Release -O - | egrep -o 'R[0-9]+.[0-9]+.[0-9]+.[0-9]+.bin' | awk 'NR==1'`
+echo "正在获取云端固件版本信息..."
+Check_Version=`wget --no-check-certificate -q $Github_Tags -O - | egrep -o 'R[0-9]+.[0-9]+.[0-9]+.[0-9]+.bin' | awk 'NR==1'`
 if [ "$Check_Version" == "" ]; then
 	echo -e "\n...未获取到任何信息,请稍后重试!"
 	exit
 fi
-GET_Version=`wget --no-check-certificate -q $Github_Release -O - | egrep -o 'R[0-9]+.[0-9]+.[0-9]+.[0-9]+' | awk 'NR==1'`
+GET_Version=`wget --no-check-certificate -q $Github_Tags -O - | egrep -o 'R[0-9]+.[0-9]+.[0-9]+.[0-9]+' | awk 'NR==1'`
 if [ "$GET_Version" == "" ]; then
-	echo -e "\n...云端固件信息获取失败!"
+	echo -e "\n...云端固件版本获取失败!"
 	exit
 fi
 echo -e "\n当前固件版本:$CURRENT_VERSION"
@@ -51,14 +57,21 @@ if [ $CURRENT_VERSION == $GET_Version ];then
 		exit
 	esac
 fi
-Firmware_Info=AutoBuild-$TARGET_PROFILE-Lede-$GET_Version
+Firmware_Info=AutoBuild-$CURRENT_DEVICE-Lede-$GET_Version
 Firmware=${Firmware_Info}.bin
 Firmware_Detail=${Firmware_Info}.detail
 echo "云端固件名称:$Firmware"
+
+curl -I -s --connect-timeout 3 www.google.com -w %{http_code}
+
 echo -e "\n正在下载固件..."
+NETWORK=`curl -I -s --connect-timeout 5 www.google.com -w %{http_code} |  tail -n1`
+if [ ! "$NETWORK" == "200" ];then
+	echo -e "\nGoogle 连接失败,可能导致固件下载速度缓慢!"
+fi
 wget --no-check-certificate -q $Github_Download/$Firmware -O $Firmware
 if [ ! "$?" == 0 ]; then
-	echo "...下载失败,请重试!"
+	echo "...下载失败,请检查网络后重试!"
 	exit
 fi
 echo "...固件下载成功!"
