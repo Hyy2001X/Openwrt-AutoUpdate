@@ -13,22 +13,23 @@ Github_Download=$Github/releases/download/AutoUpdate
 TARGET_PROFILE=d-team_newifi-d2
 
 clear
-if [ ! -f /etc/openwrt_date ] && [ ! -f /etc/openwrt_device ];then
+cd ./etc
+if [ ! -f ./openwrt_date ] && [ ! -f ./openwrt_device ];then
 	echo "AutoUpdate 不兼容当前固件!"
 	exit
 fi
 echo -e "Auto-Update Script $Version by $Author\n"
-CURRENT_VERSION=`cat /etc/openwrt_date`
+CURRENT_VERSION=`cat ./openwrt_date`
 if [ "$CURRENT_VERSION" == "" ]; then
 	echo -e "警告:当前固件版本获取失败!\n"
 	CURRENT_VERSION=未知
 fi
-CURRENT_DEVICE=`cat /etc/openwrt_device`
+CURRENT_DEVICE=`cat ./openwrt_device`
 if [ "$CURRENT_DEVICE" == "" ]; then
 	echo -e "警告:当前设备名称获取失败,使用预设设备名称[$TARGET_PROFILE]!\n"
 	CURRENT_DEVICE=$TARGET_PROFILE
 fi
-cd /tmp
+cd ../tmp
 echo "正在获取云端固件版本信息..."
 Check_Version=`wget --no-check-certificate -q $Github_Tags -O - | egrep -o 'R[0-9]+.[0-9]+.[0-9]+.[0-9]+.bin' | awk 'NR==1'`
 if [ "$Check_Version" == "" ]; then
@@ -61,14 +62,11 @@ Firmware_Info=AutoBuild-$CURRENT_DEVICE-Lede-$GET_Version
 Firmware=${Firmware_Info}.bin
 Firmware_Detail=${Firmware_Info}.detail
 echo "云端固件名称:$Firmware"
-
-curl -I -s --connect-timeout 3 www.google.com -w %{http_code}
-
-echo -e "\n正在下载固件..."
 NETWORK=`curl -I -s --connect-timeout 5 www.google.com -w %{http_code} |  tail -n1`
-if [ ! "$NETWORK" == "200" ];then
+if [ ! "$NETWORK" == 200 ];then
 	echo -e "\nGoogle 连接失败,可能导致固件下载速度缓慢!"
 fi
+echo -e "\n正在下载固件..."
 wget --no-check-certificate -q $Github_Download/$Firmware -O $Firmware
 if [ ! "$?" == 0 ]; then
 	echo "...下载失败,请检查网络后重试!"
