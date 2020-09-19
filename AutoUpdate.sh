@@ -4,10 +4,10 @@
 # AutoUpdate
 
 Author=Hyy2001
-Version=V2.6-BETA
+Version=V2.7-BETA
 Updated=2020.09.19
 
-Github=https://github.com/Hyy2001X/AutoBuild-Actions-BETA
+Github=https://github.com/Hyy2001X/AutoBuild-Actions
 Github_Tags=$Github/releases/tag/AutoUpdate
 Github_Download=$Github/releases/download/AutoUpdate
 TARGET_PROFILE=d-team_newifi-d2
