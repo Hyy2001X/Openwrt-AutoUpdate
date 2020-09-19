@@ -68,7 +68,7 @@ if [ ! "$?" == 0 ]; then
 	echo "...下载失败,请检查网络后重试!"
 	exit
 fi
-echo "...固件下载成功!"
+echo "...下载成功!"
 echo "固件大小:$(du -h $Firmware | awk '{print $1}')"
 echo -e "\n正在下载固件详细信息..."
 wget --no-check-certificate -q $Github_Download/$Firmware_Detail -O $Firmware_Detail
