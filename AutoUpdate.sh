@@ -18,12 +18,12 @@ Github_Tags=$Github/releases/tag/AutoUpdate
 Github_Download=$Github/releases/download/AutoUpdate
 clear && echo -e "Auto-Update Script $Version by $Author\n"
 cd /etc
-CURRENT_VERSION=`cat ./openwrt_date > /dev/null 2>&1`
+CURRENT_VERSION=`cat ./openwrt_date`
 if [ "$CURRENT_VERSION" == "" ]; then
 	echo "警告:当前固件版本获取失败!"
 	CURRENT_VERSION=未知
 fi
-CURRENT_DEVICE=`cat ./openwrt_device > /dev/null 2>&1`
+CURRENT_DEVICE=`cat ./openwrt_device`
 if [ "$CURRENT_DEVICE" == "" ]; then
 	echo "警告:当前设备名称获取失败,使用预设名称[$TARGET_PROFILE]"
 	CURRENT_DEVICE=$TARGET_PROFILE
