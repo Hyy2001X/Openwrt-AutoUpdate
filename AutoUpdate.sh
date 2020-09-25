@@ -4,7 +4,7 @@
 # AutoUpdate
 
 Author=Hyy2001
-Version=V2.8
+Version=V2.9-b
 Updated=2020.09.25
 TARGET_PROFILE=d-team_newifi-d2
 FIRMWARE_SUFFIX=bin
@@ -16,23 +16,23 @@ echo -ne "\n[$(date "+%H:%M:%S")] "
 
 Github_Tags=$Github/releases/tag/AutoUpdate
 Github_Download=$Github/releases/download/AutoUpdate
-clear && echo -e "Auto-Update Script $Version by $Author\n"
+clear && echo "Auto-Update Script $Version by $Author"
 cd /etc
-CURRENT_VERSION=`cat ./openwrt_date`
+CURRENT_VERSION=`cat ./openwrt_date 2> /dev/null`
 if [ "$CURRENT_VERSION" == "" ]; then
-	echo "警告:当前固件版本获取失败!"
+	echo -e "\n警告:当前固件版本获取失败!"
 	CURRENT_VERSION=未知
 fi
-CURRENT_DEVICE=`cat ./openwrt_device`
+CURRENT_DEVICE=`cat ./openwrt_device 2> /dev/null`
 if [ "$CURRENT_DEVICE" == "" ]; then
-	echo "警告:当前设备名称获取失败,使用预设名称[$TARGET_PROFILE]"
+	echo -e "\n警告:当前设备名称获取失败,使用预设名称[$TARGET_PROFILE]"
 	CURRENT_DEVICE=$TARGET_PROFILE
 fi
 cd /tmp
 TIME && echo "正在获取云端固件版本..."
 GET_Version=`wget --no-check-certificate -q $Github_Tags -O - | egrep -o 'R[0-9]+.[0-9]+.[0-9]+.[0-9]+' | awk 'NR==1'`
 if [ "$GET_Version" == "" ]; then
-	TIME && echo "...云端固件版本获取失败!"
+	TIME && echo "云端固件版本获取失败!"
 	exit
 fi
 echo -e "\n当前固件版本:$CURRENT_VERSION"
@@ -41,13 +41,13 @@ if [ $CURRENT_VERSION == $GET_Version ];then
 	read -p "已是最新版本,是否强制更新固件?[Y/N]:" Choose
 	case $Choose in
 	Y)
-		echo -e "\n开始强制更新固件...\n"
+		TIME && echo -e "开始强制更新固件...\n"
 	;;
 	y)
-		echo -e "\n开始强制更新固件...\n"
+		TIME && echo -e "开始强制更新固件...\n"
 	;;
 	*)
-		echo -e "\n用户已取消强制更新,即将退出更新程序..."
+		TIME &&  echo "用户已取消强制更新,即将退出更新程序..."
 		sleep 2
 		exit
 	esac
@@ -63,14 +63,14 @@ fi
 TIME && echo "正在下载固件,请耐心等待..."
 wget -q $Github_Download/$Firmware -O $Firmware
 if [ ! "$?" == 0 ]; then
-	TIME && echo "...下载失败,请检查网络后重试!"
+	TIME && echo "下载失败,请检查网络后重试!"
 	exit
 fi
 TIME && echo "下载成功!固件大小:$(du -h $Firmware | awk '{print $1}')B"
 TIME && echo "正在下载固件详细信息..."
 wget -q $Github_Download/$Firmware_Detail -O $Firmware_Detail
 if [ ! "$?" == 0 ]; then
-	TIME && echo "...下载失败,请检查网络后重试!"
+	TIME && echo "下载失败,请检查网络后重试!"
 	exit
 fi
 GET_MD5=`awk -F'[ :]' '/MD5/ {print $2;exit}' $Firmware_Detail`
