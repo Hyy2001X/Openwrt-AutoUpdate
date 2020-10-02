@@ -3,7 +3,7 @@
 # AutoBuild Module by Hyy2001
 # AutoUpdate
 
-Version=V3.5
+Version=V3.6
 DEFAULT_DEVICE=d-team_newifi-d2
 Github=https://github.com/Hyy2001X/AutoBuild-Actions
 
@@ -17,11 +17,16 @@ cd /etc
 CURRENT_VERSION=`awk 'NR==1' ./openwrt_info`
 CURRENT_DEVICE=`jsonfilter -e '@.model.id' < "/etc/board.json" | tr ',' '_'`
 clear && echo "Openwrt-AutoUpdate Script $Version"
-if [[ ! $1 == "" ]];then
-	Upgrade_Option="$1"
-	[ "$Upgrade_Option" == "-n" ] && TIME && echo "不保留配置升级."
+if [[ $1 == "" ]];then
+	Upgrade_Option="-q" && TIME && echo "执行: 保留配置升级"
 else
-	Upgrade_Option="-q"
+	Upgrade_Option="$1"
+	[ "$Upgrade_Option" == "-n" ] && TIME && echo "执行: 不保留配置升级"
+	if [ "$Upgrade_Option" == "-x" ];then
+		Upgrade_Option="-q"
+		local Force_Update=1
+		TIME && echo "执行: 保留配置强制升级"
+	fi
 fi
 opkg list | awk  '{print $1}' > /tmp/Package_list
 grep "curl" /tmp/Package_list > /dev/null 2>&1
@@ -48,16 +53,18 @@ if [ "$GET_Version" == "" ];then
 fi
 echo -e "\n当前固件版本:$CURRENT_VERSION"
 echo -e "云端固件版本:$GET_Version\n"
-if [ $CURRENT_VERSION == $GET_Version ];then
-	read -p "已是最新版本,是否强制更新固件?[Y/n]:" Choose
-	if [ $Choose == Y ] || [ $Choose == y ];then
-		TIME && echo -e "开始强制更新固件...\n"
-	else
-		TIME &&  echo "用户已取消强制更新,即将退出更新程序..."
-		sleep 2
-		exit
+if [[ ! $Force_Update == 1 ]];then
+	if [ $CURRENT_VERSION == $GET_Version ];then
+		read -p "已是最新版本,是否强制更新固件?[Y/n]:" Choose
+		if [ $Choose == Y ] || [ $Choose == y ];then
+			TIME && echo -e "开始强制更新固件...\n"
+		else
+			TIME &&  echo "用户已取消强制更新,即将退出更新程序..."
+			sleep 2
+			exit
+		fi
 	fi
-fi
+#fi
 Firmware_Info="AutoBuild-${CURRENT_DEVICE}-Lede-${GET_Version}"
 Firmware="${Firmware_Info}.bin"
 Firmware_Detail="${Firmware_Info}.detail"
