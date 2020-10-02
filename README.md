@@ -7,6 +7,6 @@
 2. 选择`系统`-`TTYD终端`
 
 3. 在命令行输入 
-  `curl -s https://raw.githubusercontent.com/Hyy2001X/Openwrt-AutoUpdate/master/AutoUpdate.sh | sh`
+  `curl -s https://raw.githubusercontent.com/Hyy2001X/Openwrt-AutoUpdate/master/AutoUpdate.sh | bash`
 
 自动编译 AutoBuild-Actions https://github.com/Hyy2001X/AutoBuild-Actions
