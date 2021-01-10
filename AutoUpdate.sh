@@ -3,7 +3,7 @@
 # AutoBuild Module by Hyy2001
 # AutoUpdate for Openwrt
 
-Version=V4.4
+Version=V4.7
 DEFAULT_DEVICE=d-team_newifi-d2
 Github=https://github.com/Hyy2001X/AutoBuild-Actions
 
@@ -18,40 +18,54 @@ cd /etc
 CURRENT_VERSION=$(awk 'NR==1' openwrt_info)
 CURRENT_DEVICE=$(jsonfilter -e '@.model.id' < "/etc/board.json" | tr ',' '_')
 clear && echo "Openwrt-AutoUpdate Script ${Version}"
-if [[ -z "$1" ]];then
+Input_Option="$1"
+if [[ -z "${Input_Option}" ]];then
 	Upgrade_Options="-q" && TIME && echo "执行: 保留配置更新固件[静默模式]"
 else
-	case $1 in
+	case ${Input_Option} in
 	-n)
-		TIME && echo "执行: 不保留配置更新固件"
+		TIME && echo "执行: 更新固件(不保留配置)"
 	;;
 	-q)
 		TIME && echo "执行: 保留配置更新固件[静默模式]"
 	;;
 	-v)
-		TIME && echo "执行: 保留配置更新固件[详细模式]"
+		TIME && echo "执行: 保留配置更新固件[详细日志]"
 	;;
 	-f)
 		Force_Update="1"
 		Upgrade_Options="-q"
-		TIME && echo "执行: 强制更新固件并保留配置"
+		TIME && echo "执行: 强制更新固件(保留配置)"
+	;;
+	-u)
+		AutoUpdate_Mode="1"
+		Upgrade_Options="-q"
+	;;
+	-s)
+		Stable_Mode="1"
+		Upgrade_Options="-q"
+		TIME && echo "执行: 更新固件到稳定版本(保留配置)"
 	;;
 	*)
 		echo -e "\nUsage: bash /bin/AutoUpdate.sh [<Option>]"
 		echo -e "\n可使用的选项:"
-		echo "	-f	强制更新固件并保留配置"
+		echo "	-f	强制更新固件,自动下载以及安装依赖包,跳过版本号验证(保留配置)"
 		echo "	-q	更新固件并保留配置[静默模式]"
-		echo "	-v	更新固件并保留配置[详细模式]"
-		echo "	-n	更新固件但不保留配置"
+		echo "	-v	更新固件并保留配置[详细日志]"
+		echo "	-n	更新固件(不保留配置)"
+		echo "	-u	适用于定时更新的参数,自动下载以及安装依赖包(保留配置)"
+		echo "	-s	更新固件到最新的稳定版本(保留配置)"
 		echo -e "\n项目地址: ${Github}"
 		echo -e "默认设备: ${DEFAULT_DEVICE}\n"
 		exit
 	;;
 	esac
-	[ ! $1 == "-f" ] && Upgrade_Options="$1"
+	if [[ ! "${Force_Update}" == "1" ]] && [[ ! "${AutoUpdate_Mode}" == "1" ]] && [[ ! "${Stable_Mode}" == "1" ]];then
+		Upgrade_Options="${Input_Option}"
+	fi
 fi
 opkg list | awk '{print $1}' > /tmp/Package_list
-if [[ ! "${Force_Update}" == "1" ]];then
+if [[ ! "${Force_Update}" == "1" ]] && [[ ! "${AutoUpdate_Mode}" == "1" ]];then
 	grep "curl" /tmp/Package_list > /dev/null 2>&1
 	if [[ ! $? -ne 0 ]];then
 		Google_Check=$(curl -I -s --connect-timeout 5 www.google.com -w %{http_code} | tail -n1)
@@ -60,7 +74,7 @@ if [[ ! "${Force_Update}" == "1" ]];then
 fi
 grep "wget" /tmp/Package_list > /dev/null 2>&1
 if [[ $? -ne 0 ]];then
-	if [[ "${Force_Update}" == "1" ]];then
+	if [[ "${Force_Update}" == "1" ]] || [[ "${AutoUpdate_Mode}" == "1" ]];then
 		Choose="Y"
 	else
 		TIME && read -p "未安装[wget],是否执行安装?[Y/n]:" Choose
@@ -80,15 +94,19 @@ if [[ -z "${CURRENT_VERSION}" ]];then
 	CURRENT_VERSION="未知"
 fi
 if [[ -z "${CURRENT_DEVICE}" ]];then
-	[[ "${Upgrade_Options}" == "-x" ]] && exit
+	[[ "${Force_Update}" == "1" ]] && exit
 	TIME && echo "警告: 当前设备名称获取失败,使用预设名称[$DEFAULT_DEVICE]"
 	CURRENT_DEVICE="${DEFAULT_DEVICE}"
 fi
 TIME && echo "正在检查版本更新..."
 [ ! -f /tmp/Github_Tags ] && touch /tmp/Github_Tags
 wget -q ${Github_Tags} -O - > /tmp/Github_Tags
-GET_FullVersion=$(cat /tmp/Github_Tags | egrep -o "AutoBuild-${CURRENT_DEVICE}-Lede-R[0-9]+.[0-9]+.[0-9]+.[0-9]+" | awk 'END {print}')
-GET_Version="${GET_FullVersion#*Lede-}"
+if [[ ${Stable_Mode} == 1 ]];then
+	GET_FullVersion=$(cat /tmp/Github_Tags | egrep -o "AutoBuild-${CURRENT_DEVICE}-R[0-9]+.[0-9]+.[0-9]+.[0-9]+-Stable" | awk 'END {print}')
+else
+	GET_FullVersion=$(cat /tmp/Github_Tags | egrep -o "AutoBuild-${CURRENT_DEVICE}-R[0-9]+.[0-9]+.[0-9]+.[0-9]+" | awk 'END {print}')
+fi
+GET_Version="${GET_FullVersion#*${CURRENT_DEVICE}-}"
 if [[ -z "${GET_FullVersion}" ]] || [[ -z "${GET_Version}" ]];then
 	TIME && echo "检查更新失败,请稍后重试!"
 	exit
@@ -96,12 +114,13 @@ fi
 echo -e "\n固件作者: ${Author%/*}"
 echo "设备名称: ${DEFAULT_DEVICE}"
 echo -e "\n当前固件版本: ${CURRENT_VERSION}"
-echo -e "云端固件版本: ${GET_Version}"
+echo "云端固件版本: ${GET_Version}"
 if [[ ! ${Force_Update} == 1 ]];then
 	if [[ "${CURRENT_VERSION}" == "${GET_Version}" ]];then
+		[[ "${AutoUpdate_Mode}" == "1" ]] && exit
 		TIME && read -p "已是最新版本,是否强制更新固件?[Y/n]:" Choose
 		if [[ "${Choose}" == Y ]] || [[ "${Choose}" == y ]];then
-			TIME && echo -e "开始强制更新固件...\n"
+			TIME && echo "开始强制更新固件..."
 		else
 			TIME && echo "已取消强制更新,即将退出更新程序..."
 			sleep 2
@@ -112,15 +131,47 @@ fi
 Firmware_Info="${GET_FullVersion}"
 Firmware="${Firmware_Info}.bin"
 Firmware_Detail="${Firmware_Info}.detail"
-echo "云端固件名称: ${Firmware}"
-cd /tmp
+echo -e "\n云端固件名称: ${Firmware}"
+echo "固件下载地址: ${Github_Download}"
+Disk_List="/tmp/disk_list"
+[ -f $Disk_List ] && rm -f $Disk_List
+Check_Disk="$(mount | egrep -o "mnt/+sd[a-zA-Z][0-9]+")"
+if [ ! -z "${Check_Disk}" ];then
+	echo "${Check_Disk}" > ${Disk_List}
+	Disk_Number=$(sed -n '$=' ${Disk_List})
+	if [ ${Disk_Number} -gt 1 ];then
+		for Disk_Name in $(cat ${Disk_List})
+		do
+			Disk_Available="$(df -m | grep "${Disk_Name}" | awk '{print $4}')"
+			if [ "${Disk_Available}" -gt 20 ];then
+				Download_Path="/${Disk_Name}"
+				break
+			else
+				Download_Path="/tmp"
+			fi
+		done
+	else
+		Disk_Name="${Check_Disk}"
+		Disk_Available="$(df -m | grep "${Disk_Name}" | awk '{print $4}')"
+		if [ "${Disk_Available}" -gt 20 ];then
+			Download_Path="/${Disk_Name}"
+		else
+			Download_Path="/tmp"
+		fi
+	fi
+else
+	Download_Path="/tmp"
+fi
+[ ! -d "${Download_Path}/Downloads" ] && mkdir -p ${Download_Path}/Downloads
+cd ${Download_Path}/Downloads
+echo "固件保存位置: ${Download_Path}/Downloads"
 TIME && echo "正在下载固件,请耐心等待..."
 wget -q ${Github_Download}/${Firmware} -O ${Firmware}
 if [[ ! $? == 0 ]];then
 	TIME && echo "固件下载失败,请检查网络后重试!"
 	exit
 fi
-TIME && echo "下载成功!固件大小:$(du -h ${Firmware} | awk '{print $1}')B"
+TIME && echo "固件下载成功!"
 TIME && echo "正在获取云端固件MD5,请耐心等待..."
 wget -q ${Github_Download}/${Firmware_Detail} -O ${Firmware_Detail}
 if [[ ! $? == 0 ]];then
